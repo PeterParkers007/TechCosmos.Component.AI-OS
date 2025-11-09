@@ -39,7 +39,8 @@ namespace TechCosmos.AIOS.Runtime
             // 供子类重写，用于自定义初始化
         }
 
-        private void Update()
+
+        public virtual void AI_Update()
         {
             if (IsInitialized)
                 BehavioralExecutSystem?.Update();
