@@ -1,0 +1,23 @@
+using TechCosmos.AIOS.Runtime.Interfaces;
+namespace TechCosmos.AIOS.Runtime.System
+{
+    public class BehavioralExecutSystem
+    {
+        public IState currentState;
+        public void Update()
+        {
+            Choice();
+        }
+        public void Choice()
+        {
+            if (currentState == null) return;
+            currentState.UpdateChoice();
+        }
+        public void HandOffState(IState state)
+        {
+            if (state == null) return;
+            currentState = state;
+        }
+    }
+}
+

@@ -1,0 +1,23 @@
+{
+  "name": "com.techcosmos.aios",
+  "version": "1.0.0",
+  "displayName": "TechCosmos AI OS",
+  "description": "基于实用程序的 Unity AI 行为决策系统，具有动态权重计算和状态管理功能.",
+  "unity": "2019.4",
+  "dependencies": {
+  },
+  "keywords": [
+    "ai",
+    "utility",
+    "behavior",
+    "decision",
+    "state-machine",
+    "game-ai"
+  ],
+  "author": {
+    "name": "Tech-Cosmos",
+    "email": "3427463164@qq.com",
+    "url": "https://github.com/PeterParkers007/Tech-Cosmos"
+  }
+  
+}
