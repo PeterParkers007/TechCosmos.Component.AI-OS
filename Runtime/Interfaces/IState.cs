@@ -10,7 +10,7 @@ namespace TechCosmos.AIOS.Runtime.Interfaces
         void OnExit();
         void OnUpdate();
 
-        void UpdateChoice(params string[] behaviors);
+        void UpdateChoice();
     }
 }
 
