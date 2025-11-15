@@ -17,7 +17,7 @@ namespace TechCosmos.AIOS.Runtime.System
         public void HandOffState(IState state)
         {
             if (state == null) return;
-            currentState.OnExit();
+            if(currentState != null) currentState.OnExit();
             currentState = state;
             currentState.OnEnter();
         }
