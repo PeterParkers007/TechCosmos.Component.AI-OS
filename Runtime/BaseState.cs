@@ -8,7 +8,7 @@ namespace TechCosmos.AIOS.Runtime
         public string[] behaviorNames { get; set; }
 
         public UtilityEvaluationSystem _evaluationSystem { get; }
-        public BaseState(string[] behaviorNames, UtilityEvaluationSystem evaluationSystem)
+        public BaseState(UtilityEvaluationSystem evaluationSystem,params string[] behaviorNames)
         {
             this.behaviorNames = behaviorNames;
             this._evaluationSystem = evaluationSystem;
