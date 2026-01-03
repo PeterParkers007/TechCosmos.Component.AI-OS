@@ -11,6 +11,9 @@ namespace TechCosmos.AIOS.Runtime
 
         public bool IsInitialized { get; private set; }
 
+        public Action OnAIUpdate;
+        public Action OnAIInitialized;
+
         private void Awake()
         {
             if (_autoInitialize && isActiveAndEnabled)
@@ -30,7 +33,7 @@ namespace TechCosmos.AIOS.Runtime
             BehavioralExecutSystem = new BehavioralExecutSystem();
             EvaluationSystem = new UtilityEvaluationSystem();
             IsInitialized = true;
-
+            OnAIInitialized?.Invoke();
             OnInitialized();
         }
 
@@ -43,7 +46,10 @@ namespace TechCosmos.AIOS.Runtime
         public virtual void AI_Update()
         {
             if (IsInitialized)
+            {
                 BehavioralExecutSystem?.Update();
+                OnAIUpdate?.Invoke();
+            }
         }
 
         // ±„Ω›∑√Œ  Ù–‘
