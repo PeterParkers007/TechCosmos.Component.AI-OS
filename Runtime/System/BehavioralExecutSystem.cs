@@ -12,7 +12,7 @@ namespace TechCosmos.AIOS.Runtime.System
         public void Choice()
         {
             if (currentState == null) return;
-            currentState.UpdateChoice(currentState.behaviorNames); // 传入当前状态的行为名称
+            currentState.UpdateChoice(); 
         }
         public void HandOffState(IState state)
         {
