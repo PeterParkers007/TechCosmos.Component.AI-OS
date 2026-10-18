@@ -16,7 +16,7 @@ namespace TechCosmos.AIOS.Runtime
 
         public virtual void UpdateChoice()
         {
-            _evaluationSystem.ChoiceBehavor(behaviorNames);
+            _evaluationSystem.ChoiceBehavior(behaviorNames);
         }
 
         public virtual void OnEnter()

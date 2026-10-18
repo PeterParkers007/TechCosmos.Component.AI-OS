@@ -1,66 +1,110 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using TechCosmos.AIOS.Runtime.Structs;
 namespace TechCosmos.AIOS.Runtime.System
 {
     public class UtilityEvaluationSystem
     {
-        private Dictionary<string, WeightBehavior> UtilityWeightBehaviors = new();
+        readonly Dictionary<string, WeightBehavior> _behaviors = new Dictionary<string, WeightBehavior>();
+        readonly List<WeightBehavior> _choiceBuffer = new List<WeightBehavior>();
+        int _decideDepth;
 
         public void RegisterUtilityCommand(string name, WeightBehavior behavior)
         {
-            UtilityWeightBehaviors[name] = behavior;
+            _behaviors[name] = behavior;
         }
 
         public void RegisterUtilityCommand(params (string, WeightBehavior)[] values)
         {
             foreach (var value in values)
             {
-                UtilityWeightBehaviors[value.Item1] = value.Item2;
+                _behaviors[value.Item1] = value.Item2;
             }
         }
-        public void UnRegisterUtilityCommand(string name) => UtilityWeightBehaviors.Remove(name);
+        public void UnRegisterUtilityCommand(string name) => _behaviors.Remove(name);
         public void UnRegisterUtilityCommand(params string[] names)
         {
             foreach (string name in names)
             {
-                UtilityWeightBehaviors.Remove(name);
+                _behaviors.Remove(name);
             }
         }
-        public void ChoiceBehavor(params string[] behaviorNames)
+
+        public void ChoiceBehavior(params string[] behaviorNames)
         {
-            List<WeightBehavior> behaviorList = new List<WeightBehavior>();
-            foreach (var behaviorName in behaviorNames)
+            var buffer = Rent();
+            buffer.Clear();
+            if (behaviorNames != null)
             {
-                if (UtilityWeightBehaviors.ContainsKey(behaviorName))
+                for (int i = 0; i < behaviorNames.Length; i++)
                 {
-                    behaviorList.Add(UtilityWeightBehaviors[behaviorName]);
+                    if (_behaviors.TryGetValue(behaviorNames[i], out var behavior))
+                        buffer.Add(behavior);
                 }
             }
-            WeightBehavior[] behaviors = behaviorList.ToArray();
-            FinalDecisionMaking(behaviors);
+
+            Decide(buffer);
         }
-        public void ChoiceBehavor() => FinalDecisionMaking(UtilityWeightBehaviors.Values.ToArray());
+
+        public void ChoiceBehavior()
+        {
+            var buffer = Rent();
+            buffer.Clear();
+            foreach (var behavior in _behaviors.Values)
+                buffer.Add(behavior);
+            Decide(buffer);
+        }
+
+        [Obsolete("è¯·æ”¹ç”¨ ChoiceBehaviorã€‚")]
+        public void ChoiceBehavor(params string[] behaviorNames) => ChoiceBehavior(behaviorNames);
+
+        [Obsolete("è¯·æ”¹ç”¨ ChoiceBehaviorã€‚")]
+        public void ChoiceBehavor() => ChoiceBehavior();
+
         public void FinalDecisionMaking(params WeightBehavior[] utilityWeights)
         {
             if (utilityWeights == null || utilityWeights.Length == 0)
                 return;
 
-            // ¿ÕÖµ¼ì²é
-            var validBehaviors = utilityWeights
-                .Where(b => b.weightCalculator != null && b.action != null)
-                .ToArray();
-
-            if (validBehaviors.Length == 0)
-                return;
-
-            var bestChoice = validBehaviors
-                .OrderByDescending(cmd => cmd.weightCalculator())
-                .First();
-
-            bestChoice.action.Invoke();
+            Decide(utilityWeights);
         }
 
+        List<WeightBehavior> Rent()
+        {
+            if (_decideDepth > 0)
+                return new List<WeightBehavior>();
+            return _choiceBuffer;
+        }
+
+        void Decide<T>(T behaviors) where T : IEnumerable<WeightBehavior>
+        {
+            _decideDepth++;
+            try
+            {
+                bool found = false;
+                WeightBehavior best = default;
+                float bestWeight = 0f;
+                foreach (var behavior in behaviors)
+                {
+                    if (behavior.weightCalculator == null || behavior.action == null)
+                        continue;
+
+                    float weight = behavior.weightCalculator();
+                    if (!found || weight > bestWeight)
+                    {
+                        found = true;
+                        best = behavior;
+                        bestWeight = weight;
+                    }
+                }
+
+                if (found)
+                    best.action.Invoke();
+            }
+            finally
+            {
+                _decideDepth--;
+            }
+        }
     }
 }
-

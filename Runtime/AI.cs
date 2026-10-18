@@ -7,7 +7,13 @@ namespace TechCosmos.AIOS.Runtime
     {
         [SerializeField] private bool _autoInitialize = true;
 
-        public BehavioralExecutSystem BehavioralExecutSystem { get; private set; }
+        BehavioralExecutSystem _behavior;
+
+        public BehavioralExecuteSystem BehavioralExecuteSystem => _behavior;
+
+        [Obsolete("è¯·æ”¹ç”¨ BehavioralExecuteSystemã€‚")]
+        public BehavioralExecutSystem BehavioralExecutSystem => _behavior;
+
         public UtilityEvaluationSystem EvaluationSystem { get; private set; }
 
         public bool IsInitialized { get; private set; }
@@ -31,7 +37,7 @@ namespace TechCosmos.AIOS.Runtime
         {
             if (IsInitialized) return;
 
-            BehavioralExecutSystem = new BehavioralExecutSystem();
+            _behavior = new BehavioralExecutSystem();
             EvaluationSystem = new UtilityEvaluationSystem();
             IsInitialized = true;
             OnAIInitialized?.Invoke();
@@ -40,7 +46,7 @@ namespace TechCosmos.AIOS.Runtime
 
         protected virtual void OnInitialized()
         {
-            // ¹©×ÓÀàÖØÐ´£¬ÓÃÓÚ×Ô¶¨Òå³õÊ¼»¯
+            // ä¾›å­ç±»é‡å†™ï¼Œç”¨äºŽè‡ªå®šä¹‰åˆå§‹åŒ–
         }
 
 
@@ -48,13 +54,13 @@ namespace TechCosmos.AIOS.Runtime
         {
             if (IsInitialized)
             {
-                BehavioralExecutSystem?.Update();
+                BehavioralExecuteSystem?.Update();
                 OnAIUpdate?.Invoke();
             }
         }
 
-        // ±ã½Ý·ÃÎÊÊôÐÔ
-        public bool IsExecuting => BehavioralExecutSystem?.currentState != null;
-        public string CurrentStateName => BehavioralExecutSystem?.currentState?.GetType().Name;
+        // ä¾¿æ·è®¿é—®å±žæ€§
+        public bool IsExecuting => BehavioralExecuteSystem?.currentState != null;
+        public string CurrentStateName => BehavioralExecuteSystem?.currentState?.GetType().Name;
     }
 }
